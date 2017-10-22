@@ -1,7 +1,6 @@
 #include <SPI.h>
 #include <Ethernet.h>
 
-// you can find this written on the board of some Arduino Ethernets or shields
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED }; 
 
 EthernetServer server(7890);
@@ -40,8 +39,18 @@ void loop()
     /************* Top of loop delay *********************/
     delay(fixup_delay);
     /*****************************************************/
-    
+    if (client.available() < 4) {
+      return;
+    }
     command_read += client.read(header, 4);
+
+    if (command_read < 4) {
+      Serial.print("Failed to read complete header: ");
+      Serial.println(command_read);
+      
+      client.stop();
+      return;
+    }
     
     uint8_t channel = header[0];
     uint8_t command = header[1];
