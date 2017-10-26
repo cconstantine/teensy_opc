@@ -11,17 +11,18 @@
 
 #define NUM_LEDS_PER_STRIP 256
 #define NUM_STRIPS 8
-#define BRIGHTNESS 32
+#define BRIGHTNESS 128
+const double desired_fps = 60.0;
 
 CRGB leds[NUM_STRIPS * NUM_LEDS_PER_STRIP];
 
 EthernetServer server(7890);
 
-const double desired_fps = 60.0;
-
 const double frame_millis = 1000.0f / desired_fps;
 void setup()
 {
+  memset((uint8_t*)&leds, 0, sizeof(leds));
+
   LEDS.addLeds<OCTOWS2811>(leds, NUM_LEDS_PER_STRIP);
   LEDS.setBrightness(BRIGHTNESS);
   LEDS.setDither( 0 );
@@ -71,7 +72,6 @@ void loop()
 
   if (millis() - lastFrame > 1000) {
     memset((uint8_t*)&leds, 0, sizeof(leds));
-    LEDS.show();
   }
 
   EthernetClient client = server.available();
@@ -99,8 +99,12 @@ void loop()
       client.stop();
       return;
     }
-    Serial.printf("sizeof(leds): %d\n", sizeof(leds));
-    if (len > sizeof(leds)) len = sizeof(leds);
+
+    if (len > sizeof(leds)) {
+      Serial.printf("Length of %d is bigger than led buffer of %d\n", len, sizeof(leds));
+      client.stop();
+      return;
+    }
     
     uint8_t* buf = (uint8_t*)&leds;
     while (len > 0 ) {
@@ -126,5 +130,7 @@ void loop()
     Serial.print("duration:");Serial.print(lastFrame - start);Serial.println("ms");
     Serial.println();
 
+  } else {
+    LEDS.show();
   }
 }
