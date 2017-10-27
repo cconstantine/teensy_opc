@@ -28,3 +28,4 @@ To configure the LEDs you expect to talk to you currently need to modify the ske
 ## TODO
  - Allow ethernet configuration at any time after power-on, not just boot
  - Use the SD card to configure things like number and type of LEDs, and override the default hostname
+ - More gracefully handle over-sized OPC messages
