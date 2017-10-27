@@ -20,7 +20,7 @@ To run this arduino sketch you will need:
  
 ## Operations
 
-On boot, this sketch attempts to get an IP address via DHCP, and broadcasts a zeroconf/bonjour hostname that is like `teensy-opc-SERIAL`.  The hostname and IP address will be printed to the serial console.  Ethernet setup only happens on boot, so you must have the ethernet cable plugged in when you apply power.
+On boot, this sketch attempts to get an IP address via DHCP, and broadcasts a zeroconf/bonjour hostname that is like `teensy-opc-SERIAL.local`.  The hostname and IP address will be printed to the serial console.  Ethernet setup only happens on boot, so you must have the ethernet cable plugged in when you apply power.
 
 To configure the LEDs you expect to talk to you currently need to modify the sketch.  There are some constants at the top that help define your LED setup.
 
