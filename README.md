@@ -14,18 +14,18 @@ You will need to solder the following things together:
 
 To run this arduino sketch you will need:
  - Arduino IDE ( https://www.arduino.cc/en/Main/Software )
+ - Teensyduino ( https://www.pjrc.com/teensy/td_download.html) Version 1.42 or later
  - The FastLED Library (Version 3.1 or later)
  - EthernetBonjour ( https://github.com/TrippyLighting/EthernetBonjour )
  
  
 ## Operations
 
-On boot, this sketch attempts to get an IP address via DHCP, and broadcasts a zeroconf/bonjour hostname that is like `teensy-opc-SERIAL.local`.  The hostname and IP address will be printed to the serial console.  Ethernet setup only happens on boot, so you must have the ethernet cable plugged in when you apply power.
+On boot, this sketch attempts to get an IP address via DHCP, and broadcasts a zeroconf/bonjour hostname that is like `teensy-opc-SERIAL.local`.  The hostname and IP address will be printed to the serial console.
 
 To configure the LEDs you expect to talk to you currently need to modify the sketch.  There are some constants at the top that help define your LED setup.
 
 
 ## TODO
- - Allow ethernet configuration at any time after power-on, not just boot
  - Use the SD card to configure things like number and type of LEDs, and override the default hostname
  - More gracefully handle over-sized OPC messages
