@@ -11,7 +11,7 @@
 
 #define NUM_LEDS_PER_STRIP 256
 #define NUM_STRIPS 8
-#define BRIGHTNESS 128
+#define BRIGHTNESS 32
 const double desired_fps = 60.0;
 
 CRGB leds[NUM_STRIPS * NUM_LEDS_PER_STRIP];
@@ -23,10 +23,11 @@ void setup()
 {
   memset((uint8_t*)&leds, 0, sizeof(leds));
 
-  LEDS.addLeds<OCTOWS2811>(leds, NUM_LEDS_PER_STRIP);
+  LEDS.addLeds<OCTOWS2811, RGB>(leds, NUM_LEDS_PER_STRIP);
   LEDS.setBrightness(BRIGHTNESS);
   LEDS.setDither( 0 );
-  
+  LEDS.show();
+
   Serial.begin(9600);
   
 
@@ -48,18 +49,22 @@ void setup()
   mac[3] = mac64 >> 16;
   mac[4] = mac64 >> 8;
   mac[5] = mac64;
-  
+
   SPI.begin();
+
   Ethernet.begin(mac);
   String hostname = String("teensy-opc-") + String(teensySerial());
   EthernetBonjour.begin(hostname.c_str());
+  Serial.println("Welcome to teensy_opc!");
 
-  Serial.printf("Serial: %u\n", teensySerial());
-  Serial.printf("MAC: 0x%012llX\n", teensyMAC());
-  Serial.print("IP Address: ");
-  Serial.println(Ethernet.localIP());
-  Serial.printf("Hostname: %s.local\n", hostname.c_str());
-  Serial.print("frame_millis: ");Serial.println(frame_millis);
+  Serial.printf("Serial:     %u\n", teensySerial());
+  Serial.printf("Hostname:   %s.local\n", hostname.c_str());
+  Serial.printf("MAC:        0x%012llX\n", teensyMAC());
+  //Serial.print("frame_millis: ");Serial.println(frame_millis);
+  if (IPAddress(0, 0, 0, 0) != Ethernet.localIP()) {
+    Serial.print("IP Address: ");
+    Serial.println(Ethernet.localIP());  
+  }
 
   server.begin();
 }
@@ -68,6 +73,12 @@ void setup()
 void loop()
 {
   static unsigned long lastFrame = millis();
+  IPAddress prev_ip = Ethernet.localIP();
+  Ethernet.maintain();
+  if (prev_ip != Ethernet.localIP()) {
+    Serial.print("IP Address: ");
+    Serial.println(Ethernet.localIP());
+  }
   EthernetBonjour.run();
 
   if (millis() - lastFrame > 1000) {
@@ -90,9 +101,9 @@ void loop()
     uint8_t command = header[1];
     uint16_t len = ((uint16_t)header[2] << 8) + header[3];
     
-    Serial.print("channel: ");Serial.println(channel);
-    Serial.print("command: ");Serial.println(command);
-    Serial.print("length : ");Serial.println(len);
+    //Serial.print("channel: ");Serial.println(channel);
+    //Serial.print("command: ");Serial.println(command);
+    //Serial.print("length : ");Serial.println(len);
     
     if (channel != 0 || command != 0 || len == 0) {
       Serial.println("Invalid length, command or channel");
@@ -127,8 +138,8 @@ void loop()
     
     LEDS.show();
     lastFrame = millis();
-    Serial.print("duration:");Serial.print(lastFrame - start);Serial.println("ms");
-    Serial.println();
+    //Serial.print("duration:");Serial.print(lastFrame - start);Serial.println("ms");
+    //Serial.println();
 
   } else {
     LEDS.show();
