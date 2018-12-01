@@ -82,6 +82,7 @@ void loop()
   EthernetBonjour.run();
 
   if (millis() - lastFrame > 1000) {
+    Serial.print("No new frames in ");Serial.print(millis() - lastFrame);Serial.println("ms.  Clearing LEDs.");
     memset((uint8_t*)&leds, 0, sizeof(leds));
   }
 
@@ -138,8 +139,11 @@ void loop()
     
     LEDS.show();
     lastFrame = millis();
-    //Serial.print("duration:");Serial.print(lastFrame - start);Serial.println("ms");
-    //Serial.println();
+    long duration = lastFrame - start;
+    if(duration > 16) {
+      Serial.print("duration:");Serial.print(duration);Serial.println("ms");
+      Serial.println();
+    }
 
   } else {
     LEDS.show();
