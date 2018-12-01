@@ -11,7 +11,7 @@
 
 #define NUM_LEDS_PER_STRIP 256
 #define NUM_STRIPS 8
-#define BRIGHTNESS 32
+#define BRIGHTNESS 64
 const double desired_fps = 60.0;
 
 CRGB leds[NUM_STRIPS * NUM_LEDS_PER_STRIP];
